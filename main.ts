@@ -102,7 +102,7 @@ export class CardPlugin implements PluginValue {
 	}
 
 	update(update: ViewUpdate) {
-		if (update.docChanged || update.viewportChanged) {
+		if (update.docChanged || update.viewportChanged || update.selectionSet) {
 			this.decorations = this.buildDecorations(update.view);
 		}
 	}
@@ -124,6 +124,22 @@ export class CardPlugin implements PluginValue {
 							.toString()
 							.toLowerCase();
 
+						let isSelected = false;
+						for (const range of view.state.selection.ranges) {
+							if (range.anchor >= node.from - 1 && range.anchor <= node.to + 1) {
+								isSelected = true;
+								break;
+							}
+						}
+
+						if (!isSelected) {
+							builder.add(
+								node.from - 1,
+								node.from,
+								Decoration.replace({})
+							);
+						}
+	
 						builder.add(
 							node.from,
 							node.to,
@@ -144,6 +160,14 @@ export class CardPlugin implements PluginValue {
 								widget: new CardWidget(id, name),
 							})
 						);
+
+						if (!isSelected) {
+							builder.add(
+								node.to,
+								node.to + 1,
+								Decoration.replace({})
+							);
+						}
 					}
 				},
 			});
