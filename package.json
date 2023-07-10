@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "mtg-card-links",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Link to Magic: the Gathering cards by enclosing the card name in square brackets.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

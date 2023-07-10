@@ -192,7 +192,7 @@ export default class MyPlugin extends Plugin {
 		this.registerEditorExtension(cardPlugin);
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new MTGCardLinksSettingsTab(this.app, this));
 	}
 
 	onunload() {}
@@ -210,7 +210,7 @@ export default class MyPlugin extends Plugin {
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
+class MTGCardLinksSettingsTab extends PluginSettingTab {
 	plugin: MyPlugin;
 
 	constructor(app: App, plugin: MyPlugin) {
