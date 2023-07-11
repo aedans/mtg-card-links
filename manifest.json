@@ -5,6 +5,6 @@
 	"minAppVersion": "0.15.0",
 	"description": "Link to Magic: the Gathering cards by enclosing the card name in square brackets.",
 	"author": "Aedan Smith",
-	"authorUrl": "https://github.com/aedans/mtg-card-links",
+	"authorUrl": "https://github.com/aedans",
 	"isDesktopOnly": true
 }
