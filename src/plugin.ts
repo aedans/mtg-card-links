@@ -17,9 +17,7 @@ export class MTGCardLinksPlugin extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign(
-			{
-				linkSite: "scryfall",
-			},
+			{ linkSite: "scryfall" },
 			await this.loadData()
 		);
 	}

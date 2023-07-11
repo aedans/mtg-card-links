@@ -73,8 +73,10 @@ export class CardWidget extends WidgetType {
 						const url =
 							linkSites[this.settings.linkSite](card) ??
 							card.scryfall_uri;
-						// eslint-disable-next-line @typescript-eslint/no-var-requires
-						require("electron").shell.openExternal(url);
+						
+						const a = document.createElement("a");
+						a.href = url;
+						a.click();
 					};
 				}
 			};
