@@ -36,12 +36,6 @@ export class CardWidget extends WidgetType {
 		const img = createImg(`${this.id}-1`);
 		const img2 = createImg(`${this.id}-2`);
 
-		const listener: {
-			current: (this: HTMLElement, e: MouseEvent) => void;
-		} = {
-			current: () => {},
-		};
-
 		getScryfallCard(this.name).then((card) => {
 			if (card == null) {
 				return;
@@ -58,12 +52,7 @@ export class CardWidget extends WidgetType {
 			img.src = images[0] ?? "";
 			img2.src = images[1] ?? "";
 
-			listener.current = (e) => {
-				if (!img) {
-					view.dom.removeEventListener("mousemove", listener.current);
-					return;
-				}
-
+			const onMouseMove = (e: MouseEvent) => {
 				const rect = view.dom.getBoundingClientRect();
 				img.style.left = e.clientX - rect.left + 10 + "px";
 				img.style.top = e.clientY - rect.top + 40 + "px";
@@ -90,7 +79,9 @@ export class CardWidget extends WidgetType {
 				}
 			};
 
-			view.dom.addEventListener("mousemove", listener.current);
+			view.dom.addEventListener("mousemove", onMouseMove);
+			this.destroy = () =>
+				view.dom.removeEventListener("mousemove", onMouseMove);
 		});
 
 		const span = document.createElement("span");
