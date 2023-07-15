@@ -1,4 +1,5 @@
 import moize from "moize";
+import { requestUrl } from "obsidian";
 
 export type ScryfallCard = {
 	name: string;
@@ -26,7 +27,7 @@ export const getScryfallCard = moize.promise(
 	async (name: string): Promise<ScryfallCard | null> => {
 		const encodedName = encodeURIComponent(name);
 		const url = `https://api.scryfall.com/cards/named?fuzzy=${encodedName}`;
-		const response = await fetch(url);
+		const response = await requestUrl(url);
 
 		if (response.ok) {
 			return await response.json();
