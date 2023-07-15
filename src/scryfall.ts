@@ -28,9 +28,9 @@ export const getScryfallCard = moize.promise(
 		const encodedName = encodeURIComponent(name);
 		const url = `https://api.scryfall.com/cards/named?fuzzy=${encodedName}`;
 		const response = await requestUrl(url);
-
-		if (response.ok) {
-			return await response.json();
+		
+		if (response.status == 200) {
+			return response.json;
 		} else {
 			return null;
 		}
