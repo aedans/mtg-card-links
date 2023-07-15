@@ -26,10 +26,10 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Settings for MTG Card Links." });
+		containerEl.createEl("h2", { text: "MTG Card Links." });
 
 		new Setting(containerEl)
-			.setName("Link Site")
+			.setName("Link website")
 			.setDesc("The website to link to when clicking on a card link.")
 			.addDropdown((dropdown) => {
 				dropdown
