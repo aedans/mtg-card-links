@@ -11,6 +11,7 @@ export type LinkSite =
 
 export interface MTGCardLinksSettings {
 	linkSite: LinkSite;
+	imageSize: number;
 }
 
 export class MTGCardLinksSettingsTab extends PluginSettingTab {
@@ -44,6 +45,21 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.linkSite)
 					.onChange(async (value) => {
 						this.plugin.settings.linkSite = value as LinkSite;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName("Image size")
+			.setDesc(
+				"The size of the image shown when hovering over a card link."
+			)
+			.addSlider((slider) => {
+				slider
+					.setLimits(0, 1, 0.1)
+					.setValue(this.plugin.settings.imageSize)
+					.onChange(async (value) => {
+						this.plugin.settings.imageSize = value;
 						await this.plugin.saveSettings();
 					});
 			});

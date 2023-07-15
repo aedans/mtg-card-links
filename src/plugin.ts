@@ -16,10 +16,12 @@ export class MTGCardLinksPlugin extends Plugin {
 	onunload() {}
 
 	async loadSettings() {
-		this.settings = Object.assign(
-			{ linkSite: "scryfall" },
-			await this.loadData()
-		);
+		const defaultSettings: MTGCardLinksSettings = {
+			linkSite: "scryfall",
+			imageSize: 0.5,
+		};
+
+		this.settings = Object.assign(defaultSettings, await this.loadData());
 	}
 
 	async saveSettings() {

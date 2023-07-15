@@ -11,12 +11,10 @@ export const linkSites: Record<LinkSite, (cache: ScryfallCard) => string> = {
 	cardmarket: (cache) => cache.purchase_uris.cardmarket,
 };
 
-export const cardWidth = 448 / 2;
-
-export function createImg(id: string) {
+export function createImg(id: string, width: number) {
 	const img = document.createElement("img");
 	img.className = "scryfall_card";
-	img.width = cardWidth;
+	img.width = width;
 	img.id = id;
 	img.style.opacity = "0";
 	img.toggleVisibility(false);
@@ -33,8 +31,9 @@ export class CardWidget extends WidgetType {
 	}
 
 	toDOM(view: EditorView): HTMLElement {
-		const img = createImg(`${this.id}-1`);
-		const img2 = createImg(`${this.id}-2`);
+		let width = 448 * this.settings.imageSize;
+		const img = createImg(`${this.id}-1`, width);
+		const img2 = createImg(`${this.id}-2`, width);
 
 		getScryfallCard(this.name).then((card) => {
 			if (card == null) {
@@ -53,10 +52,20 @@ export class CardWidget extends WidgetType {
 			img2.src = images[1] ?? "";
 
 			const onMouseMove = (e: MouseEvent) => {
+				width = 448 * this.settings.imageSize;
+
+				if (img.width != width) {
+					img.width = width;
+				}
+
+				if (img2.width != width) {
+					img2.width = width;
+				}
+
 				const rect = view.dom.getBoundingClientRect();
 				img.style.left = e.clientX - rect.left + 10 + "px";
 				img.style.top = e.clientY - rect.top + 40 + "px";
-				img2.style.left = e.clientX - rect.left + 10 + cardWidth + "px";
+				img2.style.left = e.clientX - rect.left + 10 + width + "px";
 				img2.style.top = e.clientY - rect.top + 40 + "px";
 
 				if (img.style.opacity != "100%") {
@@ -73,7 +82,7 @@ export class CardWidget extends WidgetType {
 						const url =
 							linkSites[this.settings.linkSite](card) ??
 							card.scryfall_uri;
-						
+
 						const a = document.createElement("a");
 						a.href = url;
 						a.click();
