@@ -49,7 +49,7 @@ export class CardViewPluginValue implements PluginValue {
 				from,
 				to,
 				enter(node) {
-					if (node.type.name == "hmd-barelink_link") {
+					if (/hmd-barelink_link|hmd-barelink_link_list-[0-9]+/y.test(node.type.name)) {
 						const id = nanoid();
 						const name = view.state.doc
 							.slice(node.from, node.to)
