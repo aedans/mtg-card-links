@@ -82,8 +82,8 @@ export class CardViewPluginValue implements PluginValue {
 								tagName: "a",
 								attributes: {
 									id: `${id}-a`,
-									onmouseover: `document.getElementById("${id}-1")?.toggleVisibility(true); document.getElementById("${id}-2")?.toggleVisibility(true)`,
-									onmouseout: `document.getElementById("${id}-1")?.toggleVisibility(false); document.getElementById("${id}-2")?.toggleVisibility(false)`,
+									onmouseover: `document.getElementById("${id}-hover")?.toggleVisibility(true)`,
+									onmouseout: `document.getElementById("${id}-hover")?.toggleVisibility(false)`,
 								},
 							})
 						);
