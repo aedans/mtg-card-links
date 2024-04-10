@@ -23,10 +23,40 @@ export type ScryfallCard = {
 	}[];
 };
 
+const scryfallApiBase = 'https://api.scryfall.com';
+const scryfallApiUris: {[key: string]: string} = {
+	singleCard: `${scryfallApiBase}/cards`,
+	cardsNamed: `${scryfallApiBase}/cards/named`,
+};
+
 export const getScryfallCard = moize.promise(
 	async (name: string): Promise<ScryfallCard | null> => {
-		const encodedName = encodeURIComponent(name);
-		const url = `https://api.scryfall.com/cards/named?fuzzy=${encodedName}`;
+		const nameSplit = name.split(/\|/);
+		const hasSet = nameSplit.length > 1;
+		const hasCollectorNumber = nameSplit.length > 2;
+
+		const cardName = nameSplit[0];
+		const cardSet = hasSet ? nameSplit[1] : '';
+		const cardNumber = hasCollectorNumber ? nameSplit[2] : '';
+
+		let url = '';
+
+		if (hasCollectorNumber) {
+			const encodedSet = encodeURIComponent(cardSet);
+			const encodedNumber = encodeURIComponent(cardNumber);
+			url = `${scryfallApiUris.singleCard}/${encodedSet}/${encodedNumber}`;
+		} else {
+			const query = new URLSearchParams();
+
+			query.append('fuzzy', cardName);
+
+			if (hasSet) {
+				query.append('set', cardSet);
+			}
+
+			url = `${scryfallApiUris.cardsNamed}?${query}`;
+		}
+
 		const response = await requestUrl(url);
 		
 		if (response.status == 200) {
