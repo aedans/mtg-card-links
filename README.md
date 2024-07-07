@@ -6,3 +6,6 @@ Card names are fuzzy matched, so any of the following will link to [Esika, God o
 - [Esika, God of the Tree // The Prismatic Bridge]
 - [Esika God of the Tree]
 - [God Esika]
+
+Sets can be specified with the format [Card Name|Set Name], and collector 
+numbers can be specified with the format [Card Name|Set Name|123]
