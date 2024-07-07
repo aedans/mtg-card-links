@@ -49,7 +49,11 @@ export class CardViewPluginValue implements PluginValue {
 				from,
 				to,
 				enter(node) {
-					if (/hmd-barelink_link|hmd-barelink_link_list-[0-9]+/y.test(node.type.name)) {
+					if (
+						/hmd-barelink_link|hmd-barelink_link_list-[0-9]+/y.test(
+							node.type.name
+						)
+					) {
 						const id = nanoid();
 						const name = view.state.doc
 							.slice(node.from, node.to)
@@ -75,6 +79,11 @@ export class CardViewPluginValue implements PluginValue {
 							);
 						}
 
+						const onmouse = (boolean: boolean) =>
+							`for (const element of document.getElementsByClassName("scryfall_hover")) 
+								if (element.id.includes("${id}")) 
+									element.toggleVisibility(${boolean})`;
+
 						builder.add(
 							node.from,
 							node.to,
@@ -82,13 +91,18 @@ export class CardViewPluginValue implements PluginValue {
 								tagName: "a",
 								attributes: {
 									id: `${id}-a`,
-									onmouseover: `document.getElementById("${id}-hover")?.toggleVisibility(true)`,
-									onmouseout: `document.getElementById("${id}-hover")?.toggleVisibility(false)`,
+									onmouseover: onmouse(true),
+									onmouseout: onmouse(false),
 								},
 							})
 						);
 
-						const endOfName = plugin.settings.showSet ? node.to : node.to - (name.includes("|") ? name.length - name.indexOf("|") : 0);
+						const endOfName = plugin.settings.showSet
+							? node.to
+							: node.to -
+							  (name.includes("|")
+									? name.length - name.indexOf("|")
+									: 0);
 
 						builder.add(
 							endOfName,

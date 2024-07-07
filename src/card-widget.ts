@@ -11,46 +11,60 @@ export const linkSites: Record<LinkSite, (cache: ScryfallCard) => string> = {
 	cardmarket: (cache) => cache.purchase_uris.cardmarket,
 };
 
+type PositionedHTMLElement = {
+	element: HTMLElement;
+	x: number;
+	y: number;
+};
+
 export function createCardImg(id: string, width: number) {
 	const img = document.createElement("img");
-	img.className = "scryfall_card";
+	img.className = "scryfall_card scryfall_hover";
 	img.width = width;
 	img.id = id;
+	img.style.opacity = "0";
+	img.toggleVisibility(false);
 	return img;
 }
 
-export function createHover(id: string, width: number, showPrices: boolean) {
-	const hover = document.createElement('span');
-	hover.className = 'scryfall_hover';
-	// hover.width = width;
-	hover.id = id;
-	hover.style.opacity = '0';
-	hover.toggleVisibility(false);
+export function createHover(id: string, width: number, height: number, showPrices: boolean) {
+	let cardPrice: PositionedHTMLElement | undefined;
 
-	let cardPrice: HTMLSpanElement | undefined;
-	let priceBreak: HTMLSpanElement | undefined;
+	const cardFront = {
+		element: createCardImg(`${id}-front`, width),
+		x: 10,
+		y: 40,
+	};
+	const cardBack = {
+		element: createCardImg(`${id}-back`, width),
+		x: 10 + width,
+		y: 40,
+	};
 
 	if (showPrices) {
-		cardPrice = document.createElement('span');
-		hover.appendChild(cardPrice);
-		cardPrice.className = 'scryfall_price';
-
-		priceBreak = document.createElement("br");
-		hover.appendChild(document.createElement("br"));
+		const element = document.createElement("span");
+		element.id = `${id}-prices`
+		element.className = "scryfall_price scryfall_hover";
+		element.style.opacity = "0";
+		element.toggleVisibility(false);
+		cardPrice = { element, x: 10, y: 40 + height };
 	}
 
-	const cardFront = createCardImg(`${this.id}-front`, width);
-	hover.appendChild(cardFront);
-
-	const cardBack = createCardImg(`${this.id}-back`, width);
-	hover.appendChild(cardBack);
-
-	return { hover, cardPrice, priceBreak, cardFront, cardBack };
+	return {
+		cardPrice,
+		cardFront,
+		cardBack,
+	};
 }
 
-export function createPriceTripletString(symbol: string, priceNormal?: string, priceFoil?: string, priceEtched?: string) {
+export function createPriceTripletString(
+	symbol: string,
+	priceNormal?: string,
+	priceFoil?: string,
+	priceEtched?: string
+) {
 	if (!priceNormal && !priceFoil && !priceEtched) {
-		return '';
+		return "";
 	}
 
 	const triplet: string[] = [];
@@ -67,29 +81,48 @@ export function createPriceTripletString(symbol: string, priceNormal?: string, p
 		triplet.push(`${symbol}${priceEtched}[E]`);
 	}
 
-	return triplet.join('/');
+	return triplet.join("/");
 }
 
-export function createPriceString(prices: ScryfallCard["prices"], showUsd: boolean, showEur: boolean, showTix: boolean) {
+export function createPriceString(
+	prices: ScryfallCard["prices"],
+	showUsd: boolean,
+	showEur: boolean,
+	showTix: boolean
+) {
 	if (!prices) {
-		return '(no prices found)';
+		return "(no prices found)";
 	}
 
 	const priceStrings: string[] = [];
 
 	if (showUsd) {
-		priceStrings.push(createPriceTripletString('$', prices.usd, prices.usd_foil, prices.usd_etched));
+		priceStrings.push(
+			createPriceTripletString(
+				"$",
+				prices.usd,
+				prices.usd_foil,
+				prices.usd_etched
+			)
+		);
 	}
 
 	if (showEur) {
-		priceStrings.push(createPriceTripletString('€', prices.eur, prices.eur_foil, prices.eur_etched));
+		priceStrings.push(
+			createPriceTripletString(
+				"€",
+				prices.eur,
+				prices.eur_foil,
+				prices.eur_etched
+			)
+		);
 	}
 
 	if (showTix && prices.tix) {
 		priceStrings.push(`${prices.tix} TIX`);
 	}
 
-	return priceStrings.filter(s => s != '').join(', ');
+	return priceStrings.filter((s) => s != "").join(", ");
 }
 
 export class CardWidget extends WidgetType {
@@ -103,9 +136,13 @@ export class CardWidget extends WidgetType {
 
 	toDOM(view: EditorView): HTMLElement {
 		let width = 448 * this.settings.imageSize;
-		const { hover, priceBreak, cardPrice, cardFront, cardBack } = createHover(`${this.id}-hover`, width, this.settings.showPrices);
-		const offsetLeft = 15;
-		const offsetTop = 40;
+		let height = (448 * (3.5 / 2.5)) * this.settings.imageSize;
+		const { cardFront, cardBack, cardPrice } = createHover(
+			this.id,
+			width,
+			height,
+			this.settings.showPrices
+		);
 
 		getScryfallCard(this.name).then((card) => {
 			if (card == null) {
@@ -123,8 +160,8 @@ export class CardWidget extends WidgetType {
 				widthDivider = 2;
 			}
 
-			cardFront.src = images[0] ?? "";
-			cardBack.src = images[1] ?? "";
+			cardFront.element.src = images[0] ?? "";
+			cardBack.element.src = images[1] ?? "";
 
 			if (this.settings.showPrices && card.prices) {
 				const priceText = createPriceString(
@@ -134,29 +171,36 @@ export class CardWidget extends WidgetType {
 					this.settings.showPricesTix
 				);
 
-				if (cardPrice && priceBreak) {
+				if (cardPrice) {
 					if (priceText) {
-						cardPrice.innerText = priceText;
+						cardPrice.element.innerText = priceText;
 					} else {
-						cardPrice.style.display = 'none';
-						priceBreak.style.display = 'none';
-					}	
+						cardPrice.element.style.display = "none";
+					}
 				}
 			}
 
 			const onMouseMove = (e: MouseEvent) => {
 				width = (448 * this.settings.imageSize) / widthDivider;
+				height = (448 * (3.5 / 2.5) * this.settings.imageSize) / widthDivider;
 
 				// if (hover.width != width) {
 				// 	hover.width = width;
 				// }
 
 				const rect = view.dom.getBoundingClientRect();
-				hover.style.left = e.clientX - rect.left + offsetLeft + "px";
-				hover.style.top = e.clientY - rect.top + offsetTop + "px";
 
-				if (hover.style.opacity != "100%") {
-					hover.style.opacity = "100%";
+				const elements = [cardFront, cardBack, cardPrice].filter(
+					(x) => !!x
+				) as PositionedHTMLElement[];
+
+				for (const { element, x, y } of elements) {
+					element.style.left = e.clientX - rect.left + x + "px";
+					element.style.top = e.clientY - rect.top + y + "px";
+
+					if (element.style.opacity != "100%") {
+						element.style.opacity = "100%";
+					}
 				}
 
 				const element = document.getElementById(`${this.id}-a`);
@@ -178,6 +222,14 @@ export class CardWidget extends WidgetType {
 				view.dom.removeEventListener("mousemove", onMouseMove);
 		});
 
-		return hover;
+		const span = document.createElement("span");
+		span.appendChild(cardFront.element);
+		span.appendChild(cardBack.element);
+
+		if (cardPrice) {
+			span.appendChild(cardPrice.element);
+		}
+
+		return span;
 	}
 }

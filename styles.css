@@ -6,13 +6,14 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
-.scryfall_card {
-  border-radius: 4.75%;
-}
 
 .scryfall_hover {
-  position:fixed;
+  position: fixed;
   z-index: 99;
+}
+
+.scryfall_card {
+  border-radius: 4.75%;
 }
 
 .scryfall_price {
