@@ -97,12 +97,13 @@ export class CardViewPluginValue implements PluginValue {
 							})
 						);
 
+						const noffset = name.includes("|")
+							? name.length - name.indexOf("|")
+							: 0;
+
 						const endOfName = plugin.settings.showSet
 							? node.to
-							: node.to -
-							  (name.includes("|")
-									? name.length - name.indexOf("|")
-									: 0);
+							: node.to - noffset;
 
 						builder.add(
 							endOfName,
