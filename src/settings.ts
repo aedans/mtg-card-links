@@ -16,6 +16,7 @@ export interface MTGCardLinksSettings {
 	showPricesUsd: boolean;
 	showPricesEur: boolean;
 	showPricesTix: boolean;
+	showSet: boolean;
 }
 
 export class MTGCardLinksSettingsTab extends PluginSettingTab {
@@ -127,5 +128,17 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 						});
 				});
 		}
+
+		new Setting(containerEl)
+			.setName("Show set")
+			.setDesc("Should the card set be shown when not editing")
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.showSet)
+					.onChange(async (value) => {
+						this.plugin.settings.showSet = value;
+						await this.plugin.saveSettings();
+					});
+			});
 	}
 }

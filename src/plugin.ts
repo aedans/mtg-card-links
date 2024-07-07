@@ -23,6 +23,7 @@ export class MTGCardLinksPlugin extends Plugin {
 			showPricesUsd: true,
 			showPricesEur: false,
 			showPricesTix: false,
+			showSet: false,
 		};
 
 		this.settings = Object.assign(defaultSettings, await this.loadData());

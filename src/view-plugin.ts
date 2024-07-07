@@ -88,9 +88,11 @@ export class CardViewPluginValue implements PluginValue {
 							})
 						);
 
+						const endOfName = plugin.settings.showSet ? node.to : node.to - (name.includes("|") ? name.length - name.indexOf("|") : 0);
+
 						builder.add(
-							node.to,
-							node.to,
+							endOfName,
+							endOfName,
 							Decoration.widget({
 								widget: new CardWidget(
 									id,
@@ -102,7 +104,7 @@ export class CardViewPluginValue implements PluginValue {
 
 						if (!isSelected) {
 							builder.add(
-								node.to,
+								endOfName,
 								node.to + 1,
 								Decoration.replace({})
 							);
