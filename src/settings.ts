@@ -12,6 +12,7 @@ export type LinkSite =
 export interface MTGCardLinksSettings {
 	linkSite: LinkSite;
 	imageSize: number;
+	showPrices: boolean;
 }
 
 export class MTGCardLinksSettingsTab extends PluginSettingTab {
@@ -63,5 +64,65 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					});
 			});
+
+		new Setting(containerEl)
+			.setHeading()
+			.setName("Show Prices")
+			.setDesc(
+				"Show card prices when hovering over a card link."
+			)
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.showPrices)
+					.onChange(async (value) => {
+						this.plugin.settings.showPrices = value;
+						await this.plugin.saveSettings();
+						this.display();
+					});
+			});
+
+		if (this.plugin.settings.showPrices) {
+			new Setting(containerEl)
+				.setName("USD")
+				.setDesc(
+					"Show prices in U.S. Dollars"
+				)
+				.addToggle((toggle) => {
+					toggle
+						.setValue(this.plugin.settings.showPricesUsd)
+						.onChange(async (value) => {
+							this.plugin.settings.showPricesUsd = value;
+							await this.plugin.saveSettings();
+						});
+				});
+
+			new Setting(containerEl)
+				.setName("EUR")
+				.setDesc(
+					"Show prices in Euros"
+				)
+				.addToggle((toggle) => {
+					toggle
+						.setValue(this.plugin.settings.showPricesEur)
+						.onChange(async (value) => {
+							this.plugin.settings.showPricesEur = value;
+							await this.plugin.saveSettings();
+						});
+				});
+
+			new Setting(containerEl)
+				.setName("TIX")
+				.setDesc(
+					"Show prices in Magic the Gathering Online Tickets"
+				)
+				.addToggle((toggle) => {
+					toggle
+						.setValue(this.plugin.settings.showPricesTix)
+						.onChange(async (value) => {
+							this.plugin.settings.showPricesTix = value;
+							await this.plugin.saveSettings();
+						});
+				});
+		}
 	}
 }

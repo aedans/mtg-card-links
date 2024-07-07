@@ -8,6 +8,18 @@ If your plugin does not need CSS, delete this file.
 */
 .scryfall_card {
   border-radius: 4.75%;
+}
+
+.scryfall_hover {
   position:fixed;
   z-index: 99;
+}
+
+.scryfall_price {
+  background-color: #000000;
+  color: #dfdfdf;
+  padding: 3px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  font-weight: bold;
 }

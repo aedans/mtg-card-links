@@ -19,6 +19,10 @@ export class MTGCardLinksPlugin extends Plugin {
 		const defaultSettings: MTGCardLinksSettings = {
 			linkSite: "scryfall",
 			imageSize: 0.5,
+			showPrices: true,
+			showPricesUsd: true,
+			showPricesEur: true,
+			showPricesTix: true,
 		};
 
 		this.settings = Object.assign(defaultSettings, await this.loadData());
