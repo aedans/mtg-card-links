@@ -16,6 +16,10 @@ export interface MTGCardLinksSettings {
 	showPricesUsd: boolean;
 	showPricesEur: boolean;
 	showPricesTix: boolean;
+	currencySeparator: string;
+	priceSeparator: string;
+	foilPostfix: string;
+	foilEtchedPostfix: string;
 	showSet: boolean;
 	requiredPrefix: string;
 }
@@ -71,11 +75,33 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
+			.setName("Show set")
+			.setDesc("Should the card set be shown when not editing")
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.showSet)
+					.onChange(async (value) => {
+						this.plugin.settings.showSet = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName("Required prefix")
+			.setDesc("Card links must be prefixed with this string to render")
+			.addText((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.requiredPrefix)
+					.onChange(async (value) => {
+						this.plugin.settings.requiredPrefix = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
 			.setHeading()
 			.setName("Show Prices")
-			.setDesc(
-				"Show card prices when hovering over a card link."
-			)
+			.setDesc("Show card prices when hovering over a card link.")
 			.addToggle((toggle) => {
 				toggle
 					.setValue(this.plugin.settings.showPrices)
@@ -89,9 +115,7 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 		if (this.plugin.settings.showPrices) {
 			new Setting(containerEl)
 				.setName("USD")
-				.setDesc(
-					"Show prices in U.S. Dollars"
-				)
+				.setDesc("Show prices in U.S. Dollars")
 				.addToggle((toggle) => {
 					toggle
 						.setValue(this.plugin.settings.showPricesUsd)
@@ -103,9 +127,7 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 
 			new Setting(containerEl)
 				.setName("EUR")
-				.setDesc(
-					"Show prices in Euros"
-				)
+				.setDesc("Show prices in Euros")
 				.addToggle((toggle) => {
 					toggle
 						.setValue(this.plugin.settings.showPricesEur)
@@ -117,9 +139,7 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 
 			new Setting(containerEl)
 				.setName("TIX")
-				.setDesc(
-					"Show prices in Magic the Gathering Online Tickets"
-				)
+				.setDesc("Show prices in Magic the Gathering Online Tickets")
 				.addToggle((toggle) => {
 					toggle
 						.setValue(this.plugin.settings.showPricesTix)
@@ -128,31 +148,58 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 							await this.plugin.saveSettings();
 						});
 				});
+
+			new Setting(containerEl)
+				.setName("Currency separator")
+				.setDesc(
+					"String to separate different currencies (USD, EUR, TIX)"
+				)
+				.addText((toggle) => {
+					toggle
+						.setValue(this.plugin.settings.currencySeparator)
+						.onChange(async (value) => {
+							this.plugin.settings.currencySeparator = value;
+							await this.plugin.saveSettings();
+						});
+				});
+
+			new Setting(containerEl)
+				.setName("Price separator")
+				.setDesc(
+					"String to separate different prices (plain, foil, etched)"
+				)
+				.addText((toggle) => {
+					toggle
+						.setValue(this.plugin.settings.priceSeparator)
+						.onChange(async (value) => {
+							this.plugin.settings.priceSeparator = value;
+							await this.plugin.saveSettings();
+						});
+				});
+
+			new Setting(containerEl)
+				.setName("Foil postfix")
+				.setDesc("Postfix to denote that a price is foil")
+				.addText((toggle) => {
+					toggle
+						.setValue(this.plugin.settings.foilPostfix)
+						.onChange(async (value) => {
+							this.plugin.settings.foilPostfix = value;
+							await this.plugin.saveSettings();
+						});
+				});
+
+			new Setting(containerEl)
+				.setName("Etched foil postfix")
+				.setDesc("Postfix to denote that a price is etched foil")
+				.addText((toggle) => {
+					toggle
+						.setValue(this.plugin.settings.foilEtchedPostfix)
+						.onChange(async (value) => {
+							this.plugin.settings.foilEtchedPostfix = value;
+							await this.plugin.saveSettings();
+						});
+				});
 		}
-
-		new Setting(containerEl)
-			.setName("Show set")
-			.setDesc("Should the card set be shown when not editing")
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.showSet)
-					.onChange(async (value) => {
-						this.plugin.settings.showSet = value;
-						await this.plugin.saveSettings();
-					});
-			});
-
-
-		new Setting(containerEl)
-			.setName("Required prefix")
-			.setDesc("Card links must be prefixed with this string to render")
-			.addText((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.requiredPrefix)
-					.onChange(async (value) => {
-						this.plugin.settings.requiredPrefix = value;
-						await this.plugin.saveSettings();
-					});
-			});
 	}
 }

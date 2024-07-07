@@ -59,6 +59,7 @@ export function createHover(id: string, width: number, height: number, showPrice
 
 export function createPriceTripletString(
 	symbol: string,
+	settings: MTGCardLinksSettings,
 	priceNormal?: string,
 	priceFoil?: string,
 	priceEtched?: string
@@ -74,21 +75,19 @@ export function createPriceTripletString(
 	}
 
 	if (priceFoil) {
-		triplet.push(`${symbol}${priceFoil}[F]`);
+		triplet.push(`${symbol}${priceFoil}${settings.foilPostfix}`);
 	}
 
 	if (priceEtched) {
-		triplet.push(`${symbol}${priceEtched}[E]`);
+		triplet.push(`${symbol}${priceEtched}${settings.foilEtchedPostfix}`);
 	}
 
-	return triplet.join("/");
+	return triplet.join(settings.priceSeparator);
 }
 
 export function createPriceString(
 	prices: ScryfallCard["prices"],
-	showUsd: boolean,
-	showEur: boolean,
-	showTix: boolean
+	settings: MTGCardLinksSettings
 ) {
 	if (!prices) {
 		return "(no prices found)";
@@ -96,10 +95,11 @@ export function createPriceString(
 
 	const priceStrings: string[] = [];
 
-	if (showUsd) {
+	if (settings.showPricesUsd) {
 		priceStrings.push(
 			createPriceTripletString(
 				"$",
+				settings,
 				prices.usd,
 				prices.usd_foil,
 				prices.usd_etched
@@ -107,10 +107,11 @@ export function createPriceString(
 		);
 	}
 
-	if (showEur) {
+	if (settings.showPricesEur) {
 		priceStrings.push(
 			createPriceTripletString(
 				"€",
+				settings,
 				prices.eur,
 				prices.eur_foil,
 				prices.eur_etched
@@ -118,11 +119,11 @@ export function createPriceString(
 		);
 	}
 
-	if (showTix && prices.tix) {
+	if (settings.showPricesTix && prices.tix) {
 		priceStrings.push(`${prices.tix} TIX`);
 	}
 
-	return priceStrings.filter((s) => s != "").join(", ");
+	return priceStrings.filter((s) => s != "").join(settings.currencySeparator);
 }
 
 export class CardWidget extends WidgetType {
@@ -166,9 +167,7 @@ export class CardWidget extends WidgetType {
 			if (this.settings.showPrices && card.prices) {
 				const priceText = createPriceString(
 					card.prices,
-					this.settings.showPricesUsd,
-					this.settings.showPricesEur,
-					this.settings.showPricesTix
+					this.settings,
 				);
 
 				if (cardPrice) {

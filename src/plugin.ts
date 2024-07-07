@@ -25,6 +25,10 @@ export class MTGCardLinksPlugin extends Plugin {
 			showPricesTix: false,
 			showSet: false,
 			requiredPrefix: "",
+			currencySeparator: " | ",
+			priceSeparator: " / ",
+			foilPostfix: " *F*",
+			foilEtchedPostfix: " *E*",
 		};
 
 		this.settings = Object.assign(defaultSettings, await this.loadData());
