@@ -17,6 +17,7 @@ export interface MTGCardLinksSettings {
 	showPricesEur: boolean;
 	showPricesTix: boolean;
 	showSet: boolean;
+	requiredPrefix: string;
 }
 
 export class MTGCardLinksSettingsTab extends PluginSettingTab {
@@ -137,6 +138,19 @@ export class MTGCardLinksSettingsTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.showSet)
 					.onChange(async (value) => {
 						this.plugin.settings.showSet = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+
+		new Setting(containerEl)
+			.setName("Required prefix")
+			.setDesc("Card links must be prefixed with this string to render")
+			.addText((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.requiredPrefix)
+					.onChange(async (value) => {
+						this.plugin.settings.requiredPrefix = value;
 						await this.plugin.saveSettings();
 					});
 			});

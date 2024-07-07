@@ -71,10 +71,17 @@ export class CardViewPluginValue implements PluginValue {
 							}
 						}
 
+						if (!name.startsWith(plugin.settings.requiredPrefix)) {
+							return;
+						}
+
+						const startOfName =
+							node.from + plugin.settings.requiredPrefix.length;
+
 						if (!isSelected) {
 							builder.add(
 								node.from - 1,
-								node.from,
+								startOfName,
 								Decoration.replace({})
 							);
 						}
@@ -85,7 +92,7 @@ export class CardViewPluginValue implements PluginValue {
 									element.toggleVisibility(${boolean})`;
 
 						builder.add(
-							node.from,
+							startOfName,
 							node.to,
 							Decoration.mark({
 								tagName: "a",
@@ -111,7 +118,7 @@ export class CardViewPluginValue implements PluginValue {
 							Decoration.widget({
 								widget: new CardWidget(
 									id,
-									name,
+									name.slice(plugin.settings.requiredPrefix.length),
 									plugin.settings
 								),
 							})
