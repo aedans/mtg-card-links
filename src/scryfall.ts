@@ -13,6 +13,15 @@ export type ScryfallCard = {
 		cardhoarder: string;
 		cardmarket: string;
 	};
+	prices: {
+		usd?: string;
+		usd_foil?: string;
+		usd_etched?: string;
+		eur?: string;
+		eur_foil?: string;
+		eur_etched?: string;
+		tix: string;
+	}
 	image_uris?: {
 		normal: string;
 	};

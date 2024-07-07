@@ -20,39 +20,40 @@ export function createCardImg(id: string, width: number) {
 }
 
 export function createHover(id: string, width: number, showPrices: boolean) {
-	const span = document.createElement('span');
-	span.className = 'scryfall_hover';
-	span.width = width;
-	span.id = id;
-	span.style.opacity = '0';
-	span.toggleVisibility(false);
+	const hover = document.createElement('span');
+	hover.className = 'scryfall_hover';
+	// hover.width = width;
+	hover.id = id;
+	hover.style.opacity = '0';
+	hover.toggleVisibility(false);
+
+	let cardPrice: HTMLSpanElement | undefined;
+	let priceBreak: HTMLSpanElement | undefined;
 
 	if (showPrices) {
-		span.cardPrice = document.createElement('span');
-		span.appendChild(span.cardPrice);
-		span.cardPrice.className = 'scryfall_price';
+		cardPrice = document.createElement('span');
+		hover.appendChild(cardPrice);
+		cardPrice.className = 'scryfall_price';
 
-		span.priceBreak = document.createElement("br");
-		span.appendChild(span.priceBreak);
+		priceBreak = document.createElement("br");
+		hover.appendChild(document.createElement("br"));
 	}
 
-	const imgFront = createCardImg(`${this.id}-front`, width);
-	span.appendChild(imgFront);
-	span.cardFront = imgFront;
+	const cardFront = createCardImg(`${this.id}-front`, width);
+	hover.appendChild(cardFront);
 
-	const imgBack = createCardImg(`${this.id}-back`, width);
-	span.cardBack = imgBack;
-	span.appendChild(imgBack);
+	const cardBack = createCardImg(`${this.id}-back`, width);
+	hover.appendChild(cardBack);
 
-	return span;
+	return { hover, cardPrice, priceBreak, cardFront, cardBack };
 }
 
-export function createPriceTripletString(symbol: string, priceNormal: number, priceFoil: number, priceEtched: number) {
+export function createPriceTripletString(symbol: string, priceNormal?: string, priceFoil?: string, priceEtched?: string) {
 	if (!priceNormal && !priceFoil && !priceEtched) {
 		return '';
 	}
 
-	let triplet = [];
+	const triplet: string[] = [];
 
 	if (priceNormal) {
 		triplet.push(`${symbol}${priceNormal}`);
@@ -69,12 +70,12 @@ export function createPriceTripletString(symbol: string, priceNormal: number, pr
 	return triplet.join('/');
 }
 
-export function createPriceString(prices, showUsd: boolean, showEur: boolean, showTix: boolean) {
+export function createPriceString(prices: ScryfallCard["prices"], showUsd: boolean, showEur: boolean, showTix: boolean) {
 	if (!prices) {
 		return '(no prices found)';
 	}
 
-	let priceStrings = [];
+	const priceStrings: string[] = [];
 
 	if (showUsd) {
 		priceStrings.push(createPriceTripletString('$', prices.usd, prices.usd_foil, prices.usd_etched));
@@ -102,7 +103,7 @@ export class CardWidget extends WidgetType {
 
 	toDOM(view: EditorView): HTMLElement {
 		let width = 448 * this.settings.imageSize;
-		const hover = createHover(`${this.id}-hover`, width, this.settings.showPrices);
+		const { hover, priceBreak, cardPrice, cardFront, cardBack } = createHover(`${this.id}-hover`, width, this.settings.showPrices);
 		const offsetLeft = 15;
 		const offsetTop = 40;
 
@@ -122,8 +123,8 @@ export class CardWidget extends WidgetType {
 				widthDivider = 2;
 			}
 
-			hover.cardFront.src = images[0] ?? "";
-			hover.cardBack.src = images[1] ?? "";
+			cardFront.src = images[0] ?? "";
+			cardBack.src = images[1] ?? "";
 
 			if (this.settings.showPrices && card.prices) {
 				const priceText = createPriceString(
@@ -133,20 +134,22 @@ export class CardWidget extends WidgetType {
 					this.settings.showPricesTix
 				);
 
-				if (priceText) {
-					hover.cardPrice.innerText = priceText;
-				} else {
-					hover.cardPrice.style.display = 'none';
-					hover.priceBreak.style.display = 'none';
+				if (cardPrice && priceBreak) {
+					if (priceText) {
+						cardPrice.innerText = priceText;
+					} else {
+						cardPrice.style.display = 'none';
+						priceBreak.style.display = 'none';
+					}	
 				}
 			}
 
 			const onMouseMove = (e: MouseEvent) => {
 				width = (448 * this.settings.imageSize) / widthDivider;
 
-				if (hover.width != width) {
-					hover.width = width;
-				}
+				// if (hover.width != width) {
+				// 	hover.width = width;
+				// }
 
 				const rect = view.dom.getBoundingClientRect();
 				hover.style.left = e.clientX - rect.left + offsetLeft + "px";

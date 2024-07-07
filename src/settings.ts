@@ -13,6 +13,9 @@ export interface MTGCardLinksSettings {
 	linkSite: LinkSite;
 	imageSize: number;
 	showPrices: boolean;
+	showPricesUsd: boolean;
+	showPricesEur: boolean;
+	showPricesTix: boolean;
 }
 
 export class MTGCardLinksSettingsTab extends PluginSettingTab {
