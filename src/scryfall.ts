@@ -1,5 +1,5 @@
 import moize from "moize";
-import { requestUrl } from "obsidian";
+import { requestUrl, RequestUrlParam } from "obsidian";
 
 export type ScryfallCard = {
 	name: string;
@@ -66,8 +66,16 @@ export const getScryfallCard = moize.promise(
 			url = `${scryfallApiUris.cardsNamed}?${query}`;
 		}
 
-		const response = await requestUrl(url);
-		
+		const requestUrlParam: RequestUrlParam = {
+			url: url,
+			headers: {
+				accept: "application/json",
+				"user-agent": "mtg-card-links",
+			},
+		};
+
+		const response = await requestUrl(requestUrlParam);
+
 		if (response.status == 200) {
 			return response.json;
 		} else {
